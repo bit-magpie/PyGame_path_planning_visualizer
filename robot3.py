@@ -28,8 +28,12 @@ class Robot(pygame.sprite.Sprite):
     def update(self):
         diff_vector = self.target - self.position
         distance = diff_vector.length()
-        angle = -ceil(diff_vector.as_polar()[1])
-        diff_angle = (angle - self.angle) %360
+        if distance > 20:
+            angle = -ceil(diff_vector.as_polar()[1])
+            diff_angle = (angle - self.angle) %360
+        else:
+            angle = self.angle
+            diff_angle = 0
         
         self.velocity += (self.acceleration, 0)
 
@@ -41,7 +45,6 @@ class Robot(pygame.sprite.Sprite):
             else:
                 self.angle += self.angular_velocity
         else:
-            self.angle = angle
             self.velocity.x = 1
             if distance < self.velocity.x:
                 self.position = self.target

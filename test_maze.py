@@ -1,71 +1,37 @@
 import pygame
 import math   
 import numpy as np
-from robot3 import Robot  
-
-class Grid(object):
-    def __init__(self, size=(800,600), u_length=40):
-        self.h_units = int(size[0]/u_length)
-        self.v_units = int(size[1]/u_length)
-        self.unit_length = u_length
-        self.size = size
-        self.surface = pygame.Surface(self.size, pygame.SRCALPHA, 32)
-        self.surface.convert_alpha()
-
-        self.obstacles = list()
-        self.targets = list()
-        self.cells = list()
-        for i in range(self.h_units):
-            self.cells.append([[0, self.get_cell_center(i,j)] for j in range(self.v_units)])
-
-    def get_cell_center(self, i, j):
-        return int(i*self.unit_length + self.unit_length/2), int(j*self.unit_length + self.unit_length/2)
-
-    def set_obstacles(self):
-        for obs in self.obstacles:
-            self.cells[obs[0]][obs[1]][0] = 100
-
-    def get_surface(self):
-        self.set_obstacles()
-        
-        for obs in self.obstacles:
-            pygame.draw.rect(self.surface, (10,20,100), self.get_rect(obs))
-
-        for i in range(self.h_units):
-            for j in range(self.v_units):
-                if self.cells[i][j][0] == 0:
-                    pygame.draw.rect(self.surface, (10,20,100), self.get_rect((i,j)), 1)
-
-        return self.surface
-
-    def set_target(self, position, robot=0):
-        self.targets.append([robot, position])
-        for trg in self.targets:
-            pygame.draw.rect(self.surface, (255,255,0), self.get_rect(trg[1]))
-            pygame.draw.circle(self.surface, (255,0,0), self.get_center(trg[1]), int(self.unit_length/2) - 2, 4)
-
-    def get_center(self, cell):
-        return self.cells[cell[0]][cell[1]][1]
-
-    def get_rect(self, cell):
-        cell_center = self.get_center(cell)
-        return (cell_center[0] - self.unit_length/2, cell_center[1] - self.unit_length/2, self.unit_length, self.unit_length)
+from robot3 import Robot
+from a_star import astar   
+from planner import Planner
+from grid import Grid
 
 
 def main(parent):
     g = Grid()
-    g.obstacles = [[4,1], [4,2],[4,3],[4,4],[4,5],[4,6],[10,3],[11,3],[12,3],[13,3],[14,3],[11,9],[11,10],[11,11],[11,12]]
+    # g.obstacles = [[4,1],[4,2],[4,3],[4,4],[4,5],[4,6],[4,7],[4,8],[9,6],[10,6],[11,6],[12,6],[13,6],[14,6],[11,7],[11,8],[11,9],[11,10],[11,11],[11,12],[11,13]]
+    # g.obstacles = [[4,1], [4,2],[4,3],[4,4],[4,5],[4,6],[4,7],[4,8],[10,3],[11,3],[12,3],[13,3],[14,3],[11,9],[11,10],[11,11],[11,12],[11,13]]
+    # g.obstacles = [[3,12], [4,12],[5,12],[6,12],[13,4],[13,5],[13,6],[13,7],[13,8],[15,7],[16,7],[17,7],[16,2],[16,13],[3,4]]
+    g.set_obstacles_file()
     sfr_grid = g.get_surface()
-    g.set_target((18,13), robot=0)
+    # g.set_target((18,13), robot=0)
 
     r1 = Robot()
-    r1.position = (50,50)
+    init_pos = (0,0)
+    r1.position = g.get_center(init_pos)
     r1.angular_velocity = 1
     r1.velocity.x = 2
+    
+    # d = Planner(g)
+    # d.find_vertices()
+    # for v in d.turn_points:
+    #     g.set_target(v)
 
-    targets = [(2,1),(3,2),(3,7),(12,8),(18,13)]
+    targets = []
+    # print(r1.position)
+    # targets = [(2,1),(3,1),(3,7),(12,8),(18,13)]
     # targets = ((60, 460),(150,500),(440,500),(480,400),(180,200),(180,100),(620,100),(700,150),(700,550))
-    lst_targets = iter([g.get_center(t) for t in targets])
+    lst_targets = iter([]) # iter([g.get_center(t) for t in targets])
 
     clock = pygame.time.Clock() 
 
@@ -73,8 +39,14 @@ def main(parent):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 raise SystemExit
+            if event.type == pygame.MOUSEBUTTONUP:
+                g.set_target(g.get_cell(pygame.mouse.get_pos()))
+                # print(g.targets[-1])
+                targets = astar(g.cost_map, g.get_cell(r1.position), g.targets[-1][1])
+                # print(targets)
+                lst_targets = iter([g.get_center(t) for t in targets])
         
-        if r1.idle:
+        if r1.idle and len(targets) > 0:
             try:
                 r1.set_target(next(lst_targets))
             except StopIteration:

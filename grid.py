@@ -16,6 +16,10 @@ class Grid(object):
         for i in range(self.h_units):
             self.cells.append([[0, self.get_cell_center(i,j)] for j in range(self.v_units)])
 
+    def redraw_all(self):
+        self.surface.fill((255,255,255))
+        _ = self.get_surface()
+
     def get_cell_center(self, i, j):
         return int(i*self.unit_length + self.unit_length/2), int(j*self.unit_length + self.unit_length/2)
 
@@ -38,12 +42,17 @@ class Grid(object):
         return self.surface
 
     def set_target(self, position, robot=0):
+        for target in self.targets:
+            if target[0] == robot:
+                self.targets.remove(target)
         self.targets.append([robot, position])
+        self.redraw_all()
         for trg in self.targets:
             pygame.draw.rect(self.surface, (255,255,0), self.get_rect(trg[1]))
             pygame.draw.circle(self.surface, (255,0,0), self.get_center(trg[1]), int(self.unit_length/2) - 2, 4)
 
-    def select_cells(self, cells, color=(50,50,100)):
+    def select_cells(self, cells, color=(50,50,100)):        
+        self.redraw_all()
         for cell in cells:
             pygame.draw.rect(self.surface, color, self.get_rect(cell))
 

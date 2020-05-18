@@ -12,7 +12,7 @@ def main(parent):
     # g.obstacles = [[4,1],[4,2],[4,3],[4,4],[4,5],[4,6],[4,7],[4,8],[9,6],[10,6],[11,6],[12,6],[13,6],[14,6],[11,7],[11,8],[11,9],[11,10],[11,11],[11,12],[11,13]]
     # g.obstacles = [[4,1], [4,2],[4,3],[4,4],[4,5],[4,6],[4,7],[4,8],[10,3],[11,3],[12,3],[13,3],[14,3],[11,9],[11,10],[11,11],[11,12],[11,13]]
     # g.obstacles = [[3,12], [4,12],[5,12],[6,12],[13,4],[13,5],[13,6],[13,7],[13,8],[15,7],[16,7],[17,7],[16,2],[16,13],[3,4]]
-    g.set_obstacles_file()
+    g.set_obstacles_file(path='maps/obstacles1_3.data')
     sfr_grid = g.get_surface()
     # g.set_target((18,13), robot=0)
 
@@ -22,10 +22,13 @@ def main(parent):
     r1.angular_velocity = 1
     r1.velocity.x = 2
     
-    # d = Planner(g)
-    # d.find_vertices()
+    d = Planner(g)
+    d.find_vertices()
     # for v in d.turn_points:
-    #     g.set_target(v)
+    g.select_cells(d.turn_points, color=(100,255,100))
+    d.get_paths()
+    for path in d.connection:
+        pygame.draw.line(sfr_grid, (0,0,0), g.get_center(path[0]), g.get_center(path[1]))
 
     targets = []
     # print(r1.position)

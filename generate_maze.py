@@ -13,7 +13,6 @@ def main(parent):
     sfr_grid = g.get_surface()
     obstacles = []
 
-    delete = False
     clock = pygame.time.Clock() 
 
     while True:
@@ -23,17 +22,15 @@ def main(parent):
                 raise SystemExit
             if event.type == pygame.MOUSEBUTTONUP:
                 pos = g.get_cell(pygame.mouse.get_pos())
-                if not delete:
-                    obstacles.append(pos)
+                if pos in obstacles:
+                    obstacles.remove(pos)                    
                 else:
-                    index = obstacles.remove(pos)
-                print(obstacles)
+                    obstacles.append(pos)
+                
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_d:
-                    delete = True 
-                elif event.key == pygame.K_s:
-                    delete = False
-                
+                    obstacles = []
+        
         parent.fill((255, 255, 255))
         g.select_cells(obstacles)
         parent.blit(sfr_grid, (0,0))

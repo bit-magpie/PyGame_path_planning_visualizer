@@ -1,10 +1,12 @@
 import pygame
 import numpy as np
+from pygame.math import Vector2
 
 class Planner():
     def __init__(self, grid):
         self.grid = grid
         self.turn_points = []
+        self.connection = []
         # self.current = current
         # self.target = target
 
@@ -13,7 +15,7 @@ class Planner():
             for j in range(self.grid.v_units):
                 if self.grid.cells[i][j][0] == 0:
                     obs_count = []
-                    if len(obs_count) < 2:
+                    if len(obs_count) < 3:
                         for pos in self.get_neighbors((i,j)):
                             if self.grid.cells[pos[0]][pos[1]][0] == 100:
                                 obs_count.append(pos)
@@ -47,5 +49,26 @@ class Planner():
     def get_neighbors(self, cell):
         return [tuple(np.array(cell) + np.array(c)) for c in self.get_neighbor_pos(cell)]
 
+    def get_paths(self):
+        t_points = self.turn_points
+        for point in t_points:
+            for other in t_points:
+                if point != other:
+                    diff_vector = (Vector2(other) - Vector2(point))
+                    length = int(diff_vector.length())
+                    no_crossings = True
+                    for i in range(length+1):
+                        seg = i*(1/length)*diff_vector + point
+                        cross = (round(seg.x),round(seg.y))
+                        if self.grid.cells[cross[0]][cross[1]][0]>0:
+                            no_crossings = False
+                            break
+                    
+                    if no_crossings:
+                        self.connection.append([point, other])
+                    if point in t_points:
+                        t_points.remove(point)
+
+        print(len(self.connection))
     def get_shortest(self):
         pass

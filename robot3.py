@@ -10,6 +10,8 @@ class Robot(pygame.sprite.Sprite):
         pygame.draw.circle(self.image, color, (int(size[0]/2),int(size[1]/2)), 20)
         pygame.draw.polygon(self.image, (230, 230, 230), ((10,8),(10,32),(35,20)))
 
+        self.id = 0
+        self.color = color
         self.rect = self.image.get_rect()
         self.position = Vector2(self.rect.center )
         self.velocity = Vector2(1.0, 0.0)
@@ -17,6 +19,7 @@ class Robot(pygame.sprite.Sprite):
         self.length = self.rect[2]
         self.acceleration = 0.0
         self.angular_velocity = 1
+        self.linear_velocity = 1
         self.idle = True
 
         self.target = self.position
@@ -45,7 +48,7 @@ class Robot(pygame.sprite.Sprite):
             else:
                 self.angle += self.angular_velocity
         else:
-            self.velocity.x = 1
+            self.velocity.x = self.linear_velocity
             if distance < self.velocity.x:
                 self.position = self.target
                 self.idle = True
@@ -53,7 +56,7 @@ class Robot(pygame.sprite.Sprite):
                 diff_vector.normalize_ip()
                 diff_vector = diff_vector * self.velocity.x            
                 self.position += diff_vector
-
+        
     def draw(self, screen):
         rotated = pygame.transform.rotate(self.image, self.angle)
         rect = rotated.get_rect()

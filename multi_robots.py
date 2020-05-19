@@ -9,7 +9,7 @@ from grid import Grid
 
 def main(parent):
     g = Grid()
-    g.set_obstacles_file(path='maps/obstacles1_1.data')
+    g.set_obstacles_file(path='maps/obstacles1_3.data')
     sfr_grid = g.get_surface()
 
     r1 = Robot()
@@ -23,14 +23,14 @@ def main(parent):
     r2.position = g.get_center(init_pos2)
     r2.set_target(g.get_center(init_pos2))
     r2.angular_velocity = 1
-    r2.velocity.x = 2
+    r2.linear_velocity = 2
 
     r3 = Robot(color=(0,0,255))
     init_pos3 = (14,14)
     r3.position = g.get_center(init_pos3)
     r3.set_target(g.get_center(init_pos3))
     r3.angular_velocity = 1
-    r3.velocity.x = 1
+    r3.linear_velocity = 3
     
     targets1 = []
     lst_targets1 = iter([])
@@ -50,18 +50,19 @@ def main(parent):
             if event.type == pygame.QUIT:
                 raise SystemExit
             if event.type == pygame.MOUSEBUTTONUP:
-                if selected_robot == 1:
-                    g.set_target(g.get_cell(pygame.mouse.get_pos()))
-                    targets1 = astar(g.cost_map, g.get_cell(r1.position), g.targets[-1][1])
-                    lst_targets1 = iter([g.get_center(t) for t in targets1])
-                elif selected_robot == 2:
-                    g.set_target(g.get_cell(pygame.mouse.get_pos()), robot=2)
-                    targets2 = astar(g.cost_map, g.get_cell(r2.position), g.targets[-1][1])
-                    lst_targets2 = iter([g.get_center(t) for t in targets2])
-                elif selected_robot == 3:
-                    g.set_target(g.get_cell(pygame.mouse.get_pos()), robot=3)
-                    targets3 = astar(g.cost_map, g.get_cell(r3.position), g.targets[-1][1])
-                    lst_targets3 = iter([g.get_center(t) for t in targets3])
+                if g.get_cost(g.get_cell(pygame.mouse.get_pos())) == 0:
+                    if selected_robot == 1:
+                        g.set_target(g.get_cell(pygame.mouse.get_pos()))
+                        targets1 = astar(g.cost_map, g.get_cell(r1.position), g.targets[-1][1])
+                        lst_targets1 = iter([g.get_center(t) for t in targets1])
+                    elif selected_robot == 2:
+                        g.set_target(g.get_cell(pygame.mouse.get_pos()), robot=2, color=r2.color)
+                        targets2 = astar(g.cost_map, g.get_cell(r2.position), g.targets[-1][1])
+                        lst_targets2 = iter([g.get_center(t) for t in targets2])
+                    elif selected_robot == 3:
+                        g.set_target(g.get_cell(pygame.mouse.get_pos()), robot=3, color=r3.color)
+                        targets3 = astar(g.cost_map, g.get_cell(r3.position), g.targets[-1][1])
+                        lst_targets3 = iter([g.get_center(t) for t in targets3])
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:

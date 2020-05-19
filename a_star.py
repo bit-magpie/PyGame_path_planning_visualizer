@@ -43,7 +43,8 @@ def astar(maze, start, end):
 
         # Pop current off open list, add to closed list
         open_list.pop(current_index)
-        closed_list.append(current_node)
+        if current_node not in closed_list:
+            closed_list.append(current_node)
 
         # Found the goal
         if current_node == end_node:
@@ -94,4 +95,5 @@ def astar(maze, start, end):
                     continue
 
             # Add the child to the open list
-            open_list.append(child)
+            if child not in open_list:
+                open_list.append(child)

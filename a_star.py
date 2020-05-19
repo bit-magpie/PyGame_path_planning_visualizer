@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+
 class Node():
     """A node class for A* Pathfinding"""
 
@@ -30,7 +30,6 @@ def astar(maze, start, end):
 
     # Add the start node
     open_list.append(start_node)
-
     # Loop until you find the end
     while len(open_list) > 0:
 

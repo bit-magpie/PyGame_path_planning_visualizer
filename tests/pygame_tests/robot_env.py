@@ -1,7 +1,7 @@
 import pygame
 import math   
 import numpy as np
-from robot3 import Robot  
+from robot import Robot  
 
 class Obstacles(pygame.Surface):
     def __init__(self, size=(40,40), color=(10,20,100)):

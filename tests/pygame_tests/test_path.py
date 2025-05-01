@@ -1,7 +1,7 @@
 import pygame
 import math   
 import numpy as np
-from robot3 import Robot
+from robot import Robot
 from planner import Planner
 from grid import Grid
 

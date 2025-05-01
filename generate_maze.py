@@ -1,13 +1,21 @@
 import pygame
+import argparse
 from grid import Grid
 
-def save_file(data_list):
-    file  = open("maps/obstacles1.data", "w+") 
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Maze Generator Tool')
+    parser.add_argument('--output', type=str, default='maps/obstacles1.data',
+                        help='Output file path for the maze (default: maps/obstacles1.data)')
+    return parser.parse_args()
+
+def save_file(data_list, output_path='maps/obstacles1.data'):
+    file = open(output_path, "w+") 
     for data in data_list:
         file.write(str(data[0]) + "," + str(data[1]) + "\n")
     file.close()
+    print(f"Maze saved to: {output_path}")
 
-def main(parent):
+def main(parent, output_path='maps/obstacles1.data'):
     g = Grid()
     # g.obstacles = read_file() 
     sfr_grid = g.get_surface()
@@ -18,7 +26,7 @@ def main(parent):
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                save_file(obstacles)
+                save_file(obstacles, output_path)
                 raise SystemExit
             if event.type == pygame.MOUSEBUTTONUP:
                 pos = g.get_cell(pygame.mouse.get_pos())
@@ -38,6 +46,7 @@ def main(parent):
         clock.tick(60)
 
 if __name__ == '__main__':
+    args = parse_arguments()
     pygame.init()
     screen = pygame.display.set_mode((800, 600))    
-    main(screen)
+    main(screen, args.output)

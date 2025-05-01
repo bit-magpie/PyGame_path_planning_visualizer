@@ -2,6 +2,8 @@
 
 A visualization tool for multi-robot path planning using the A* algorithm. This project provides an interactive environment to generate mazes, set obstacle configurations, and visualize multiple robots navigating through paths.
 
+![image](media/path_plan.gif)
+
 ## Description
 
 This application demonstrates path planning algorithms for multiple robots in a grid environment. It features:
@@ -75,7 +77,3 @@ The simulation shows three robots (red, green, and blue) navigating to their tar
 - `planner.py`: Path planning utilities
 - `robot3.py`: Robot behavior and rendering implementation
 - `maps/`: Directory containing obstacle configurations
-
-## License
-
-[Your License Information]

@@ -1,15 +1,23 @@
 import pygame
 import math   
 import numpy as np
-from robot3 import Robot
+import argparse
+from robot import Robot
 from a_star import astar   
 from planner import Planner
 from grid import Grid
 
 
-def main(parent):
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Multi-Robot Path Planning Simulator')
+    parser.add_argument('-m', '--map', type=str, default='maps/obstacles1_3.data',
+                        help='Path to obstacle map file (default: maps/obstacles1_3.data)')
+    return parser.parse_args()
+
+
+def main(parent, obstacle_map='maps/obstacles1_3.data'):
     g = Grid()
-    g.set_obstacles_file(path='maps/obstacles1_3.data')
+    g.set_obstacles_file(path=obstacle_map)
     sfr_grid = g.get_surface()
 
     r1 = Robot()
@@ -102,6 +110,7 @@ def main(parent):
         clock.tick(60)
 
 if __name__ == '__main__':
+    args = parse_arguments()
     pygame.init()
     screen = pygame.display.set_mode((800, 600))    
-    main(screen)
+    main(screen, args.map)
